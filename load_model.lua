@@ -30,8 +30,9 @@ function module.loadVGG(height, width)
           paper "Image Style Transfer using CNN", page 2416]]
       local filter_size = layer.weight:size(2)*layer.weight:size(3)*layer.weight:size(4)
       for j = 1,layer.weight:size(1) do
-        local mean = layer.weight[1]:sum()/filter_size
-        layer.weight[1]:div(mean)
+        local mean = layer.weight[j]:sum()/(filter_size)
+        layer.weight[j]:div(mean)
+        --print(layer.weight[j])
       end
       print(("Normalize layer: %s"):format(name))
     end
