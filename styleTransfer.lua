@@ -22,9 +22,13 @@ local function main()
   input_image:uniform(0,1)
   input_image = preprocess(input_image):float()
   input_image = input_image:cuda()
-  image.display(input_image)
 
   content_features_conv4_1 = model:forward(content_img):clone()
+  image.display(content_features_conv4_1[1])
+  image.display(content_features_conv4_1[2])
+  image.display(content_features_conv4_1[3])
+  image.display(content_features_conv4_1[4])
+  image.display(content_features_conv4_1[5])
 --[[  print(model:get(1).name)
   content_features_conv1_1 = model:get(2).output:clone()
   print(model:get(6).name)
@@ -38,6 +42,9 @@ local function main()
 ]]
   criterion = nn.MSECriterion()
   criterion:cuda()
+
+
+
   local _, gradParams = model:getParameters()
   local function feval(x)
     gradParams:zero()
@@ -54,15 +61,20 @@ local function main()
   end
 
   optim_state = {
-    learningRate = 0.03
+    learningRate = 1
     }
-  for t = 1, 100 do
-  	local x, losses = optim.adam(feval, input_image, optim_state)
+
+
+
+  for t = 1, 5 do
+  	local x, losses = optim.lbfgs(feval, input_image, optim_state)
   	print('Iteration number: '.. t ..'; Current loss: '.. losses[1])
   end
 
   output_image = deprocess(input_image:clone():double())
   image.display(output_image)
+
+
 end
 
 function preprocess(img)
