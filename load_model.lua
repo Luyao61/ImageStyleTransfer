@@ -48,6 +48,24 @@ function module.loadVGG(height, width)
   model:remove(39)
   model:remove(38)
 
+  model:remove(37)
+  model:remove(36)
+  model:remove(35)
+  model:remove(34)
+  model:remove(33)
+  model:remove(32)
+  model:remove(31)
+  model:remove(30)
+  model:remove(29)
+
+  model:remove(28)
+  model:remove(27)
+  model:remove(26)
+  model:remove(25)
+  model:remove(24)
+  model:remove(23)
+  model:remove(22)
+
   model:cuda()
   return model
 end

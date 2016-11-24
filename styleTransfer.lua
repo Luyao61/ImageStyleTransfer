@@ -24,11 +24,7 @@ local function main()
   input_image = input_image:cuda()
 
   content_features_conv4_1 = model:forward(content_img):clone()
-  image.display(content_features_conv4_1[1])
-  image.display(content_features_conv4_1[2])
-  image.display(content_features_conv4_1[3])
-  image.display(content_features_conv4_1[4])
-  image.display(content_features_conv4_1[5])
+
 --[[  print(model:get(1).name)
   content_features_conv1_1 = model:get(2).output:clone()
   print(model:get(6).name)
@@ -66,14 +62,14 @@ local function main()
 
 
 
-  for t = 1, 5 do
+  for t = 1, 20 do
   	local x, losses = optim.lbfgs(feval, input_image, optim_state)
   	print('Iteration number: '.. t ..'; Current loss: '.. losses[1])
   end
 
   output_image = deprocess(input_image:clone():double())
   image.display(output_image)
-
+  image.save("golden_gate_conv4_1_reconstruction.jpg",output_image)
 
 end
 
