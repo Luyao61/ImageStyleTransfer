@@ -65,7 +65,7 @@ function module.loadVGG(height, width)
   model:remove(24)
   model:remove(23)
   model:remove(22)
-
+  print(model)
   model:cuda()
   return model
 end

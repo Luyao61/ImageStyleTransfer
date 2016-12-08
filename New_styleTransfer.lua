@@ -17,8 +17,8 @@ function main()
   local style_layers = {'relu1_1','relu2_1','relu3_1','relu4_1','relu5_1'}
   content_layer_index = 1
   style_layer_index = 1
-  content_weight = 0.0005
-  style_weight = 1
+  content_weight = 0.001
+  style_weight = 0.5
 
   model_layers = {}
   output_layers = {}
@@ -41,10 +41,12 @@ function main()
       end
 
       if name == content_layers[content_layer_index] then
+  --      output_layers[#output_layers + 1] = nn.MulConstant(content_weight/(128*256*256/2^32))(model_layers[#model_layers])
         output_layers[#output_layers + 1] = nn.MulConstant(content_weight/(128*256*256/2^32))(model_layers[#model_layers])
         content_layer_index = content_layer_index + 1
       elseif name == style_layers[style_layer_index] then
         output_layers[#output_layers + 1] = nn.MulConstant(style_weight/(128*256*256/2^style_layer_index))(GramMatrix()(model_layers[#model_layers]))
+--        output_layers[#output_layers + 1] = nn.MulConstant(style_weight/(128*256*256/2^style_layer_index))(GramMatrix()(model_layers[#model_layers]))
         style_layer_index = style_layer_index + 1
       end
     end
@@ -54,13 +56,13 @@ function main()
   model:cuda()
 
   -- load content image
-  content_img = image.load("examples/1.jpg")
+  content_img = image.load("examples/gg.png")
   --content_img = image.crop(content_img,"c",300,300)
   content_img = preprocess(content_img):float()
   content_img = content_img:cuda()
 
   -- load style image
-  style_img = image.load("examples/2.jpg")
+  style_img = image.load("examples/stary.png")
   --style_img = image.crop(style_img,"c",300,300)
   style_img = preprocess(style_img):float()
   style_img = style_img:cuda()
@@ -97,20 +99,6 @@ function main()
   local _, gradParams = model:getParameters()
   local function feval(x)
     gradParams:zero()
---[[    local total_loss = 0
-    local loss = 0
-    gradLoss = {}
-    -- Just run the network back and forth
-    local yhat = model:forward(x)
-
-    local G = GramMatrix()(yhat[1])
-    G:div(yhat[1]:nElement())
-    local A = GramMatrix()(target[1])
-    A:div(target[1]:nElement())
-    loss = criterion:forward(G,A)
-    dloss = criterion:backward(G,A)
-    dloss =
-]]
 
     local yhat = model:forward(x)
     local loss = criterion:forward(yhat,target)
@@ -125,7 +113,7 @@ function main()
     learningRate = 1
   }
 
-  for t = 1, 15 do
+  for t = 1, 20 do
     local x, losses = optim.lbfgs(feval, input_image, optim_state)
     print('Iteration number: '.. t ..'; Current loss: '.. losses[1])
   end

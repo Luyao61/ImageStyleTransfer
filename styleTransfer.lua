@@ -13,7 +13,7 @@ local function main()
   model = load_model.loadVGG(128,128)
 
   -- load content image
-  content_img = image.load("examples/golden_gate.jpg")
+  content_img = image.load("examples/UVA.jpg")
   content_img = preprocess(content_img):float()
   content_img = content_img:cuda()
 

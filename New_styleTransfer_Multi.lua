@@ -17,8 +17,9 @@ function main()
   local style_layers = {'relu1_1','relu2_1','relu3_1','relu4_1','relu5_1'}
   content_layer_index = 1
   style_layer_index = 1
-  content_weight = 0.0005
-  style_weight = 1
+  content_weight = 0.005
+  style_weight1 = 0.5
+  style_weight2 = 0.5
 
   model_layers = {}
   output_layers = {}
@@ -44,8 +45,10 @@ function main()
         output_layers[#output_layers + 1] = nn.MulConstant(content_weight/(128*256*256/2^32))(model_layers[#model_layers])
         content_layer_index = content_layer_index + 1
       elseif name == style_layers[style_layer_index] then
-        output_layers[#output_layers + 1][1] = nn.MulConstant(style_weight/(2*128*256*256/2^style_layer_index))(GramMatrix()(model_layers[#model_layers]))
-        output_layers[#output_layers + 1][2] = nn.MulConstant(style_weight/(2*128*256*256/2^style_layer_index))(GramMatrix()(model_layers[#model_layers]))
+
+        output_layers[#output_layers + 1] = nn.MulConstant(style_weight1/(128*256*256/2^style_layer_index))(GramMatrix()(model_layers[#model_layers]))
+        output_layers[#output_layers + 1] = nn.MulConstant(style_weight2/(128*256*256/2^style_layer_index))(GramMatrix()(model_layers[#model_layers]))
+
         style_layer_index = style_layer_index + 1
       end
     end
@@ -55,18 +58,18 @@ function main()
   model:cuda()
 
   -- load content image
-  content_img = image.load("examples/1.jpg")
+  content_img = image.load("examples/dc.jpg")
   --content_img = image.crop(content_img,"c",300,300)
   content_img = preprocess(content_img):float()
   content_img = content_img:cuda()
 
   -- load style image
-  style_img1 = image.load("examples/style1.jpg")
+  style_img1 = image.load("examples/qinghua.jpg")
   style_img1 = preprocess(style_img1):float()
   style_img1 = style_img1:cuda()
 
   -- load style image
-  style_img2 = image.load("examples/style2.jpg")
+  style_img2 = image.load("examples/bloon.jpg")
   style_img2 = preprocess(style_img2):float()
   style_img2 = style_img2:cuda()
 
@@ -82,25 +85,25 @@ function main()
 
   local content_output
   content_output = model:forward(content_img)
-  target[5] = content_output[5]:clone()
+  target[9] = content_output[9]:clone()
 
   local style_output
   style_output = model:forward(style_img1)
-  target[1][1] = style_output[1]:clone()
-  target[2][1] = style_output[2]:clone()
-  target[3][1] = style_output[3]:clone()
-  target[4][1] = style_output[4]:clone()
-  target[6][1] = style_output[6]:clone()
+  target[1] = style_output[1]:clone()
+  target[3] = style_output[3]:clone()
+  target[5] = style_output[5]:clone()
+  target[7] = style_output[7]:clone()
+  target[10] = style_output[10]:clone()
 
   style_output = model:forward(style_img2)
-  target[1][2] = style_output[1]:clone()
-  target[2][2] = style_output[2]:clone()
-  target[3][2] = style_output[3]:clone()
-  target[4][2] = style_output[4]:clone()
-  target[6][2] = style_output[6]:clone()
+  target[2] = style_output[2]:clone()
+  target[4] = style_output[4]:clone()
+  target[6] = style_output[6]:clone()
+  target[8] = style_output[8]:clone()
+  target[11] = style_output[11]:clone()
 
   criterion = nn.ParallelCriterion()
-  for i=1,6 do
+  for i=1,11 do
     criterion:add(nn.MSECriterion())
   end
   criterion:cuda()
@@ -129,7 +132,7 @@ function main()
 
   output_image = deprocess(input_image:clone():double())
   image.display(output_image)
-  image.save("multi.jpg",output_image)
+  image.save("multi10.jpg",output_image)
 
 end
 
