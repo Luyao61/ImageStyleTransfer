@@ -5,14 +5,13 @@ require 'loadcaffe'
 local module = {}
 
 function module.loadVGG(height, width)
-  model = loadcaffe.load('models/VGG_ILSVRC_19_layers_deploy.prototxt', 'models/VGG_ILSVRC_19_layers.caffemodel', 'cudnn')
+  model = loadcaffe.load('models/VGG_ILSVRC_19_layers_deploy.prototxt', 'models/VGG_ILSVRC_19_layers.caffemodel', 'nn')
 
   local model_size = #model
   for i = 1, model_size do
     local layer = model:get(i)
     local name = layer.name
     local layer_type = torch.type(layer)
-
     if(layer_type == 'nn.SpatialMaxPooling') then
       -- replace maxpooling layer to averagepooling
       local kW, kH = layer.kW, layer.kH
