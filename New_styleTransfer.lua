@@ -41,12 +41,10 @@ function main()
       end
 
       if name == content_layers[content_layer_index] then
-  --      output_layers[#output_layers + 1] = nn.MulConstant(content_weight/(128*256*256/2^32))(model_layers[#model_layers])
         output_layers[#output_layers + 1] = nn.MulConstant(content_weight/(128*256*256/2^32))(model_layers[#model_layers])
         content_layer_index = content_layer_index + 1
       elseif name == style_layers[style_layer_index] then
         output_layers[#output_layers + 1] = nn.MulConstant(style_weight/(128*256*256/2^style_layer_index))(GramMatrix()(model_layers[#model_layers]))
---        output_layers[#output_layers + 1] = nn.MulConstant(style_weight/(128*256*256/2^style_layer_index))(GramMatrix()(model_layers[#model_layers]))
         style_layer_index = style_layer_index + 1
       end
     end

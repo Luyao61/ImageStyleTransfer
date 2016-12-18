@@ -5,7 +5,7 @@ require 'loadcaffe'
 local module = {}
 
 function module.loadVGG(height, width)
-  model = loadcaffe.load('models/VGG_ILSVRC_19_layers_deploy.prototxt', 'models/VGG_ILSVRC_19_layers.caffemodel', 'nn')
+  model = loadcaffe.load('models/VGG_ILSVRC_19_layers_deploy.prototxt', 'models/VGG_ILSVRC_19_layers.caffemodel', 'cudnn')
 
   local model_size = #model
   for i = 1, model_size do

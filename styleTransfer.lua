@@ -13,7 +13,7 @@ local function main()
   model = load_model.loadVGG(128,128)
 
   -- load content image
-  content_img = image.load("examples/UVA.jpg")
+  content_img = image.load("examples/golden_gate.jpg")
   content_img = preprocess(content_img):float()
   content_img = content_img:cuda()
 
@@ -90,20 +90,6 @@ function deprocess(img)
   return img
 end
 main()
---[[function GramMatrix()
-  local net = nn.Sequential()
-  net:add(nn.View(-1):setNumInputDims(2))
-  local concat = nn.ConcatTable()
-  concat:add(nn.Identity())
-  concat:add(nn.Identity())
-  net:add(concat)
-  net:add(nn.MM(false, true))
-  return net
-end]]
-
-
-
-
 
 
 
